@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Object Detection Demo</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="container">
+<h1>Object Detection Demo</h1>
+
+
+<form class="card" method="POST" action="/predict" enctype="multipart/form-data">
+<label>Upload image</label>
+<input type="file" name="image" accept="image/*" required />
+
+
+<div class="row">
+<div>
+<label>Confidence</label>
+<input type="number" name="conf" min="0" max="1" step="0.01" value="{{ conf }}" />
+</div>
+<div>
+<label>IoU</label>
+<input type="number" name="iou" min="0" max="1" step="0.01" value="{{ iou }}" />
+</div>
+</div>
+
+
+<button type="submit">Run Detection</button>
+</form>
+
+
+{% if result_image %}
+<div class="card">
+<h2>Result</h2>
+<img class="result" src="{{ result_image }}" alt="Annotated result" />
+
+
+{% if boxes and boxes|length > 0 %}
+<h3>Detections</h3>
+<table>
+<thead>
+<tr><th>Label</th><th>Confidence</th><th>Box [x1,y1,x2,y2]</th></tr>
+</thead>
+<tbody>
+{% for b in boxes %}
+<tr>
+<td>{{ b.label }}</td>
+<td>{{ '%.2f'|format(b.confidence) }}</td>
+<td>[{{ '%.1f'|format(b.box[0]) }}, {{ '%.1f'|format(b.box[1]) }}, {{ '%.1f'|format(b.box[2]) }}, {{ '%.1f'|format(b.box[3]) }}]</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p>No objects detected at the current thresholds.</p>
+{% endif %}
+</div>
+{% endif %}
+</html>
